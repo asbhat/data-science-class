@@ -16,6 +16,12 @@ def parse_file(fileToOpen, labels):
 					break
 				
 		else:
+			helpList = outputRow[2].split('/')
+			if int(helpList[1]) == 0:
+				helpPct = 0
+			else:
+				helpPct = float(helpList[0])/float(helpList[1])
+			outputRow[2] = helpPct
 			outputData.append(outputRow)
 			outputRow = [0 for x in range(4)]
 
@@ -30,6 +36,6 @@ if __name__ == '__main__':
 
 	for ln in outputData:
 		for elem in ln:
-			outputFile.write(elem + '\t')
+			outputFile.write(str(elem) + '\t')
 		outputFile.write('\n')
 	outputFile.close()
