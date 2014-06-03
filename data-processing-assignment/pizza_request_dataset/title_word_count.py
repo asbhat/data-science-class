@@ -12,7 +12,7 @@ def raw_data_to_word_count(rawData, key, successKey, \
 	titles = [row[key].split() for row in rawData if \
 	row[successKey]==successFlag]
 
-	words = [e[i].lower().strip('.,;:[]{}()-') for e in titles for \
+	words = [e[i].lower().strip('.,;:[]{}()-?') for e in titles for \
 	i in xrange(len(e))]
 
 	titlesCounter = collections.Counter(words)
