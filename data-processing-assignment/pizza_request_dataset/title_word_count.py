@@ -27,7 +27,7 @@ def raw_data_to_word_count(rawData, key, successKey, \
 
 def word_count_to_top_list(titlesCounter, n=15):
 
-	""""""
+	"""Returns top n words and their counts"""
 
 	topTitleWords = sorted([[k, titlesCounter[k]] for k in \
 		titlesCounter], key=lambda x:x[1], reverse=True)[:n]
