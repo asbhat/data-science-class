@@ -1,6 +1,6 @@
 **/*.DS_Store
 misc/*
 **/lahman-csv_2014-02-14/
-
+**/aws/
 **/*.ropeproject
 **/.ipynb_checkpoints/
