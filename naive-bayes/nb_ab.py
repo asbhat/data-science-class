@@ -8,33 +8,50 @@
        P(document | label) is the likelihood function
        P(label) is the prior
 
-       We can find the label that maximizes P(label | document) by maximizing P(document | label) * P(label)
-       so we need to compute P(document | label) and P(label) 
+       We can find the label that maximizes P(label | document) by maximizing
+       P(document | label) * P(label) so we need to compute
+       P(document | label) and P(label)
 
-       Under the NAIVE assumption, we assume all the words in the document are independent, so we can MULTIPLY their probabilities.
-       So P(document | label) = P ( word_1 in doc | label) * P ( word_2 in doc | label) * ... * P ( word_n in doc | label)
+       Under the NAIVE assumption, we assume all the words in the document are
+       independent, so we can MULTIPLY their probabilities.
+       So P(document | label) = P ( word_1 in doc | label) *
+                                P ( word_2 in doc | label) * ... *
+                                P ( word_n in doc | label)
 
        So we now just need to compute P ( word_i in doc | label) and P(label).
 
-       P ( word_i in doc | label) is easy to compute, its just COUNT(word_i in doc) / COUNT(word_i with label L)
+       P ( word_i in doc | label) is easy to compute, its just
+       COUNT(word_i in doc) / COUNT(word_i with label L)
 
-       So we iterate through our dataset. We count how often any word appears in a document with a certain label. 
+       So we iterate through our dataset. We count how often any word appears
+       in a document with a certain label.
 
-       If we have 3 email subject: "buy gold now", "send gold nigeria", "nigeria presidential election" and they are labeled for spam as follows:
-       "buy gold now" : SPAM, "send gold nigeria": SPAM, "nigeria presidential election": NOT SPAM
-       Then, for example, we saw 2/3 total spam documents, the word nigera 3 times, twice in spam documents once not in a spam document.
+       If we have 3 email subject: "buy gold now", "send gold nigeria",
+                                   "nigeria presidential election"
+       and they are labeled for spam as follows:
+          "buy gold now" : SPAM, "send gold nigeria": SPAM,
+          "nigeria presidential election": NOT SPAM
+       Then, for example, we saw 2/3 total spam documents, the word nigera
+       3 times, twice in spam documents once not in a spam document.
 
-       So P(nigeria | SPAM) = COUNT(nigeria in spam documents) / COUNT(spam documents) = 2/2
-       P(gold | SPAM) = COUNT(gold in spam documents) / COUNT(spam documents) = 2/2
-       P(buy | SPAM) = COUNT(gold in spam document) / COUNT(spam documents)
+       So P(nigeria | SPAM) =
+          COUNT(nigeria in spam documents) / COUNT(spam documents) = 2/2
+       P(gold | SPAM) =
+          COUNT(gold in spam documents) / COUNT(spam documents) = 2/2
+       P(buy | SPAM) =
+          COUNT(gold in spam document) / COUNT(spam documents)
 
-       So for every word we need to keep a counter of how many spam documents and non-spam documents it appeared in
+       So for every word we need to keep a counter of how many
+       spam documents and non-spam documents it appeared in
 
 
        ------ Computing Priors ------
 
-       Priors are also computed from the data.  We saw 2/3 spam documents, so the prior probability of a document being spam, without looking at the text
-       is 2/3.  This is the uninformed prior as we are just setting it from the data, but if we had predisposed ideas on the spam distribution we could adjust it
+       Priors are also computed from the data.  We saw 2/3 spam documents,
+       so the prior probability of a document being spam,
+       without looking at the text is 2/3.  This is the uninformed prior
+       as we are just setting it from the data, but if we had predisposed
+       ideas on the spam distribution we could adjust it
        """
 
 import numpy as np
@@ -103,7 +120,9 @@ class NaiveBayes():
     
     ## Update counts on word + label y
     ## Use pair (word, y) as key and increment counts
-    for word in instance:
+    cleanInstance = instance.strip('.?!,*"').split()
+
+    for word in cleanInstance:
       try:
         self._word_counts[(word, y)] += 1
       except KeyError:
@@ -134,7 +153,8 @@ class NaiveBayes():
 
         Returns
         -------
-          : array[array[ float, float ... ], ...] =  class probabilities per sample 
+          : array[array[ float, float ... ], ...] =  class probabilities 
+                                                     per sample 
     """
 
     return [ self._predict_instance(instance) for instance in X ]
@@ -167,8 +187,8 @@ class NaiveBayes():
         -------
           p : float =  class probability
 
-      HINT : Often times, multiplying many small probabilities leads to underflow, a common numerical trick
-      is to compute the log probability.
+      HINT : Often times, multiplying many small probabilities leads to 
+      underflow, a common numerical trick is to compute the log probability.
 
       Remember, the log(p1 * p2 * p3) = log p1 + log p2 + log p3
     """
@@ -178,8 +198,9 @@ class NaiveBayes():
 
 if __name__ == '__main__':
   data = pd.read_csv(
-    '~/Github/Data-Science-Class/sentiment-model/training.txt')
+    '~/Github/Data-Science-Class/sentiment-model/training.txt', sep='\t')
   model = NaiveBayes()
   model.fit(data.Phrase, data.Sentiment)
 
-  print np.exp(model.predict_proba(["This is not an insult", "You are a big moron moron moron"]))
+  print np.exp(model.predict_proba(["This is not an insult", 
+                                    "You are a big moron moron moron"]))
