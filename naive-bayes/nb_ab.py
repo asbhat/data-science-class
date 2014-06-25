@@ -57,6 +57,7 @@
 import numpy as np
 import math
 import pandas as pd
+import string
 
 class NaiveBayes():
 
@@ -111,22 +112,22 @@ class NaiveBayes():
 
     """
     ## Update counts on y
-    ##TODO##
-    try:
-      self._class_counts[y] += 1
-    except KeyError:
-      self._class_counts[y] = 1
-
+    ## Want to increment by word (in case same word in sentence > 1)
     
     ## Update counts on word + label y
     ## Use pair (word, y) as key and increment counts
-    cleanInstance = instance.strip('.?!,*"').split()
+    trans = string.maketrans("","")
+    cleanInstance = instance.translate(trans, string.punctuation).split()
 
     for word in cleanInstance:
       try:
-        self._word_counts[(word, y)] += 1
+        self._word_counts[(y, word)] += 1
       except KeyError:
-        self._word_counts[(word, y)] = 1
+        self._word_counts[(y, word)] = 1
+      try:
+        self._class_counts[y] += 1
+      except KeyError:
+        self._class_counts[y] = 1
 
 
   def predict(self, X):
@@ -198,7 +199,8 @@ class NaiveBayes():
 
 if __name__ == '__main__':
   data = pd.read_csv(
-    '~/Github/Data-Science-Class/sentiment-model/training.txt', sep='\t')
+    '/Users/aditya/Github/Data-Science-Class/sentiment-model/training.txt',
+    sep='\t')
   model = NaiveBayes()
   model.fit(data.Phrase, data.Sentiment)
 
