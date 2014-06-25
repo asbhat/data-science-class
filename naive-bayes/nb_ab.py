@@ -59,7 +59,7 @@ import math
 import pandas as pd
 import string
 
-class NaiveBayes():
+class NaiveBayes(object):
 
 
   def __init__(self):
@@ -97,7 +97,11 @@ class NaiveBayes():
 
   def _fit_priors(self):
     """Set priors based on data"""
-    ##TODO##
+    total_samples = sum(self._class_counts.values())
+
+    for y in self._class_counts:
+      self._priors[y] = float(self._class_counts[y]) / total_samples
+
 
   def _fit_instance(self, instance, y):
     """Train based on single samples       
@@ -117,7 +121,7 @@ class NaiveBayes():
     ## Update counts on word + label y
     ## Use pair (word, y) as key and increment counts
     trans = string.maketrans("","")
-    cleanInstance = instance.translate(trans, string.punctuation).split()
+    cleanInstance = instance.translate(trans, string.punctuation).lower().split()
 
     for word in cleanInstance:
       try:
@@ -141,8 +145,9 @@ class NaiveBayes():
         -------
           : array[int] = class per sample
     """
+    pass
 
-    return [self._predict_instance(x) for x in X]
+    # return [self._assign_class(x) for x in X]
 
 
   def predict_proba(self, X):
@@ -170,10 +175,8 @@ class NaiveBayes():
         -------
           : array[ float, float ... ] =  class probabilities 
     """
-    ##TODO##
-    classes = '???'
     return [self._compute_class_probability(instance, c) for
-            c in classes]
+            c in self._class_counts.keys()]
 
   def _prior_prob(self, c):
     return self._priors[c]
@@ -194,7 +197,16 @@ class NaiveBayes():
       Remember, the log(p1 * p2 * p3) = log p1 + log p2 + log p3
     """
     ##TODO##
-    return 0
+    trans = string.maketrans("","")
+    cleanInstance = instance.translate(trans, string.punctuation).lower().split()
+
+    result = 1
+    for word in cleanInstance:
+      result *= float(self._word_counts.get((c, word),1.0)/self._class_counts[c])
+
+    result *= self._priors[c]
+
+    return result
 
 
 if __name__ == '__main__':
