@@ -4,3 +4,4 @@ misc/*
 **/aws/
 **/*.ropeproject
 **/.ipynb_checkpoints/
+**/*lemon_car_training.csv
