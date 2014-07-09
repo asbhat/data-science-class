@@ -23,7 +23,12 @@ class CreditScoreFeaturizer():
 
     ## First step, select some fields we care about, 
     ## all of these are numeric, so we can just pick them out
-    data = np.array(dataset[['age']])
+    data = np.array(dataset[['RevolvingUtilizationOfUnsecuredLines', 'age',
+                    'NumberOfTime30-59DaysPastDueNotWorse', 'DebtRatio',
+                    'MonthlyIncome', 'NumberOfOpenCreditLinesAndLoans',
+                    'NumberOfTimes90DaysLate', 'NumberRealEstateLoansOrLines',
+                    'NumberOfTime60-89DaysPastDueNotWorse',
+                    'NumberOfDependents']])
 
     ## You want to perform some more interesting transformations of the data
     ## For example, ratios
@@ -38,10 +43,10 @@ class CreditScoreFeaturizer():
 
     # Scaling features may be important you have very large outliers or 
     # need more intepretable coefficients
-    # scaler = preprocessing.StandardScaler()
-    # scaled_income = scaler.fit_transform(data[:,1])
+    scaler = preprocessing.StandardScaler()
+    scaled_debt_income = scaler.fit_transform(data[:,3:5])
 
-    # data =  np.column_stack([data, scaled_income])
+    data =  np.column_stack([data, scaled_debt_income])
 
     # ## Turning features into discrete features is important if you are using linear classifier, but the underlying 
     # ## data does not have a linear relationship
@@ -58,7 +63,8 @@ class CreditScoreFeaturizer():
 def create_submission(model, X_test, test_df):
   predictions = pd.Series(x[1] for x in model.predict_proba(X_test))
 
-  submission = pd.DataFrame({'Id': test_df['Unnamed: 0'], 'Probability': predictions})
+  submission = pd.DataFrame({'Id': test_df['Unnamed: 0'],
+                            'Probability': predictions})
   submission.sort_index(axis=1, inplace=True)
   submission.to_csv('submission.csv', index=False)
 
@@ -79,17 +85,20 @@ def main():
   ## Use any model that we might find appropriate
 
   # Create the object and set relevant parameters
-  model = LogisticRegression(C=10)
-
+  #   model = LogisticRegression(penalty='l1', C=1)
+  #   model = RandomForestClassifier(n_estimators=100)
   # Set target variable y
   y = train_input.SeriousDlqin2yrs
 
   print "Cross validating..."
   print np.mean(cross_val_score(model, X_train, y, cv=10, scoring='roc_auc'))
 
+
   print "Training final model..."
   model = model.fit(X_train, y)
 
+  # print "Remaining model coefficients..."
+  # print model.coef_
 
   print "Create predictions on submission set..."
   create_submission(model, X_test, test_input)
