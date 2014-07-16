@@ -55,9 +55,15 @@ if __name__ == '__main__':
 
     ### This creates a simpler representation of the images other than the raw pixels
     ### Change the number of components to see how this effects classification accuracy
-    models = [LogisticRegression(C=5), RandomForestClassifier()]
+    models = [LogisticRegression(C=5), RandomForestClassifier(n_estimators=10)]
     modelnames = ['Logistic Regression', 'Random Forest']
-    for n_comps in xrange(5, 250, 5):
+    rng = xrange(1, 16)
+    bestmodel = ''
+    bestn = 0
+    bestauc = 0
+    pctcomp = 0
+    pctincrem = 100.0 / (len(models) * len(rng))
+    for n_comps in rng:
         for m in xrange(len(models)):
             pca = RandomizedPCA(n_components=n_comps)
 
@@ -71,9 +77,17 @@ if __name__ == '__main__':
             # model = LogisticRegression(C = 5)
             model = models[m]
 
+            auc = np.mean(cross_val_score(model, X, labels, scoring='roc_auc'))
+            if auc > bestauc:
+                bestmodel = modelnames[m]
+                bestn = n_comps
+                bestauc = auc
+            
+            pctcomp += pctincrem
+            print '{0:.1f}%'.format(pctcomp)
             ### Do some cross validation
-            print modelnames[m] + " Components:", n_comps, np.mean(
-                cross_val_score(model, X, labels, scoring='roc_auc'))
+            # print modelnames[m] + " Components:", n_comps, np.mean(
+            #     cross_val_score(model, X, labels, scoring='roc_auc'))
 
-
+    print bestmodel + ' Components:', bestn, bestauc
 
