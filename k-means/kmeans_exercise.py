@@ -8,14 +8,14 @@ import numpy as np
 from sklearn.utils.fixes import bincount
 from sklearn.utils import check_random_state
 
-""" Takes two vectors v1, v2 and tells us the distance between them
-    Basic impl: Euclidean Distance =
-          sum of squared distances =
-          SQRT ( SUM_over_i ( (v1[i] - v2[i]) ^ 2 ) )
-"""
-
 
 def distance_function(v1, v2):
+
+    """ Takes two vectors v1, v2 and tells us the distance between them
+        Basic impl: Euclidean Distance =
+              sum of squared distances =
+              SQRT ( SUM_over_i ( (v1[i] - v2[i]) ^ 2 ) )
+    """
 
     # assert len(v1) == len(v2), 'vectors must be equal length'
 
@@ -140,13 +140,25 @@ def _compute_labels_and_score(X, centers):
     n_samples = X.shape[0]
     score = 0.0
 
-    # set the default value of centers to -1 to be able to detect errors
+    # sets the default value of centers to -1 to be able to detect errors
     labels = -np.ones(n_samples, np.int32)
-    score = 0.0
+
     # TODO: IMPLEMENT
     # 1. Iterate over the samples and the clusters
     # 2. Compute the distance between samples and cluster center
     # 3. Save the closest cluster center
+
+    for i in xrange(n_samples):
+        minDist = np.infty
+        cluster = -1
+        for j in xrange(n_clusters):
+            dist = distance_function(X[i], centers[j])
+            if dist < minDist:
+                minDist = dist
+                cluster = j
+
+        labels[i] = cluster
+        score += minDist
 
     # SCORE is the SUM of distances from point to closest center
     # So once we've found the closest center, add the distance to closest
