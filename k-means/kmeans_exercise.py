@@ -65,8 +65,12 @@ def k_means(X, n_clusters, n_init=10, max_iter=10):
                                                 max_iter=max_iter)
         # determine if these results are the best so far
         # TODO: IMPLEMENT
+        if score < best_score:
+            best_score = score
+            best_labels = labels
+            best_centers = centers
 
-    return best_labels, best_score, best_centers
+    return best_centers, best_labels, best_score
 
 
 def _kmeans_single(X, n_clusters, max_iter=10):
@@ -110,6 +114,10 @@ def _kmeans_single(X, n_clusters, max_iter=10):
 
         # Save the best run
         # TODO: IMPLEMENT
+        if score < best_score:
+            best_score = score
+            best_labels = labels
+            best_centers = centers
 
     return best_labels, best_score, best_centers
 
@@ -150,14 +158,14 @@ def _compute_labels_and_score(X, centers):
 
     for i in xrange(n_samples):
         minDist = np.infty
-        cluster = -1
+        closestClusterIndex = None
         for j in xrange(n_clusters):
             dist = distance_function(X[i], centers[j])
             if dist < minDist:
                 minDist = dist
-                cluster = j
+                closestClusterIndex = j
 
-        labels[i] = cluster
+        labels[i] = closestClusterIndex
         score += minDist
 
     # SCORE is the SUM of distances from point to closest center
@@ -200,6 +208,10 @@ def _recompute_centers(X, labels, n_clusters):
     # 1. For each sample
     # 2. What label is it? Let's say its label is 'label'
     # 3. Add feature X's feature i to centers[label] feature value i
+    for i in xrange(n_samples):
+        sample = X[i]
+        label = labels[i]
+        centers[label] += sample
 
     # Normalize by the size of the cluster
     centers /= n_samples_in_cluster[:, np.newaxis]
