@@ -2,10 +2,18 @@ Data-Science-Class
 ==================
 
 ## Table of Contents
-* Python
-* Pandas / Data Visualization
-* K-Nearest Neighbors (KNN)
-* Naive Bayes
-* Linear / Logistic Regression
-* Web Scraping
+* Classification Prediction (Credit Prediction)
+* Random Acts of Pizza (Data Processing)
+* Distance Functions
+* Spot Comparison (Final Project)
 * K-Means Clustering
+* Python Exercises
+* Predicting Bad Cars (Lemon Cars)
+* Linear / Logistic Regression
+* K-Nearest Neighbors (KNN)
+* Parsing Data (Movie Reviews)
+* Naive Bayes
+* Pandas / Data Visualization
+* Python Intro
+* Web Scraping
+* Sentiment Model
